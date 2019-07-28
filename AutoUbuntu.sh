@@ -3,37 +3,37 @@
 echo  GET IPADRESS
 IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
-sleep 1
+#
 # set time GMT +8
 echo  Changing Server Time Zone...
 ln -fs /usr/share/zoneinfo/Asia/Manila /etc/localtime
-sleep 1
+#
 # System Update
 echo  Sytem Update
 apt-get update
 apt-get upgrade
-sleep 1
+#
 # Install Openvpn
 echo  Installing OPENVPN
 apt-get -y install openvpn 
-sleep 1
+#
 # Install Firewall
 echo  Installing Firewall
 apt-get -y install ufw
-sleep 1
+#
 #Installing Easy-RSA...
 echo  Installing RSA
 apt-get -y install easy-rsa
-sleep 1
+#
 
 #Installing Apache2 Web Server...
 echo Installing Apache2
 apt-get -y install apache2
-sleep 1
+#
 #Install Squid
 echo  Installing Squid
 apt-get -y install squid
-sleep 1
+#
 #Install Zip
 apt-get -y install zip
 #Install Privoxy
@@ -389,7 +389,7 @@ echo "nameserver 1.1.1.1" > /etc/resolv.conf
 echo "nameserver 1.0.0.1" >> /etc/resolv.conf
 sed -i '$ i\echo "nameserver 1.1.1.1" > /etc/resolv.conf' /etc/rc.local
 sed -i '$ i\echo "nameserver 1.0.0.1" >> /etc/resolv.conf' /etc/rc.local
-sed -i '$ i\sleep 10' /etc/rc.local
+sed -i '$ i\#0' /etc/rc.local
 sed -i '$ i\for p in $(pgrep openvpn); do renice -n -20 -p $p; done' /etc/rc.local
 sed -i '$ i\for p in $(pgrep privoxy); do renice -n -20 -p $p; done' /etc/rc.local
 sed -i '$ i\for p in $(pgrep squid); do renice -n -20 -p $p; done' /etc/rc.local
@@ -500,7 +500,7 @@ echo OpenVPN Port: 110
 echo Squid Port: 8080
 echo Privoxy Port: 8118
 echo
-sleep 1
+#
 echo \> Download your openvpn config here.
 echo http://$IPADDRESS/config.zip
 
