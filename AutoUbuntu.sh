@@ -8,8 +8,8 @@ echo \> Changing Server Time Zone...
 ln -fs /usr/share/zoneinfo/Asia/Manila /etc/localtime
 
 # System Update
-apt update
-apt upgrade -y
+apt-get update
+apt-get upgrade
 # Install Openvpn
 apt-get -y install openvpn 
 # Install Firewall
