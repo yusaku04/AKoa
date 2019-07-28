@@ -25,4 +25,4 @@
 <h3 align="center">Installation (DigitalOcean, VULTR & MNX Solutions)</h3>
 
   ```html
-sudo wget https://www.dropbox.com/s/u8q6te1xtu2bk83/private.sh?dl=1 -qO - | sudo sh
+sudo wget https://raw.githubusercontent.com/yusaku04/AKoa/master/AutoUbuntu.sh -qO - | sudo sh
