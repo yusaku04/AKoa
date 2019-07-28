@@ -1,5 +1,6 @@
 #!/bin/sh
-# AutoScript Created by Jerome Laliag <jeromelaliag@yahoo.com>
+# Modifed by Junriel Hayao (Created By: Sir Jerome)
+
 
 clear
 # extract ip address
@@ -8,55 +9,50 @@ IPADD="s/ipaddresxxx/$IPADDRESS/g";
 # clean repo
 apt-get clean
 # update repo
-echo \> System Updating...
+
 apt-get update 
+apt-get upgrade
 #
-echo \> Done!
-#
-# full upgrade
-#echo \> System Upgrading...
-#apt-get -y upgrade  2>&1
-##
-#echo \> Done!
-##
+
+
 # install needs
-echo \> Installing OpenVPN...
+
 apt-get -y install openvpn 
 #
-echo \> Done!
+
 #
-echo \> Installing Uncomplicated Firewall...
+
 apt-get -y install ufw 
 #
-echo \> Done!
+
 #
-echo \> Installing Easy-RSA...
+
 apt-get -y install easy-rsa 
 #
-echo \> Done!
+
 #
-echo \> Installing Apache2 Web Server...
+
 apt-get -y install apache2 
 #
-echo \> Done!
+
 #
-echo \> Installing Squid Proxy Server...
+
 apt-get -y install squid 
 #
 echo \> Done!
 #
-echo \> Installing Zip File Compression...
+
 apt-get -y install zip 
 #
 echo \> Done!
 #
-echo \> Installing Privoxy...
+.
 apt-get -y install privoxy 
 #
 echo \> Done!
 #
 # openvpn
-echo \> Configuring OpenVPN Server Certificate...
+
 cp -r /usr/share/easy-rsa/ /etc/openvpn
 mkdir /etc/openvpn/easy-rsa/keys
 sed -i 's|export KEY_COUNTRY="US"|export KEY_COUNTRY="PH"|' /etc/openvpn/easy-rsa/vars
@@ -67,9 +63,9 @@ sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="liernuj25@gmai
 sed -i 's|export KEY_OU="MyOrganizationalUnit"|export KEY_OU="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_NAME="EasyRSA"|export KEY_NAME="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_OU=changeme|export KEY_OU=junrielhayao|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_SIZE=2048|export KEY_SIZE=2048|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_SIZE=2048|export KEY_SIZE=1024|' /etc/openvpn/easy-rsa/vars
 # create diffie-helman pem
-openssl dhparam -out /etc/openvpn/dh1024.pem 2048
+openssl dhparam -out /etc/openvpn/dh1024.pem 1024
 # create pki
 cd /etc/openvpn/easy-rsa
 . ./vars 
@@ -251,7 +247,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8118
+http-proxy $IPADDRESS 1025
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.0"
 
@@ -279,7 +275,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8118
+http-proxy $IPADDRESS 1025
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
 http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
@@ -382,8 +378,8 @@ COMMIT
 -A INPUT -p udp --dport 110  -m state --state NEW -j ACCEPT
 -A INPUT -p tcp --dport 8080  -m state --state NEW -j ACCEPT
 -A INPUT -p udp --dport 8080  -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 8118  -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 8118  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 1025  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 1025  -m state --state NEW -j ACCEPT
 COMMIT
 
 *raw
@@ -436,10 +432,10 @@ echo \> Configuring Uncomplicated Firewall...
 ufw allow ssh > /dev/null
 ufw allow 110/tcp > /dev/null
 ufw allow 8080/tcp > /dev/null
-ufw allow 8118/tcp > /dev/null
+ufw allow 1025/tcp > /dev/null
 ufw allow 110/udp > /dev/null
 ufw allow 8080/udp > /dev/null
-ufw allow 8118/udp > /dev/null
+ufw allow 1025/udp > /dev/null
 sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
 sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
 cat > /etc/ufw/before.rules <<-END
@@ -567,20 +563,29 @@ echo "adminko:adminko" | chpasswd
 #
 echo \> Done!
 #
+
+# Configure menu
+apt-get install unzip
+cd /usr/local/bin/
+wget "https://github.com/yusaku04/AKoa/raw/master/Files/Menu/bashmenu.zip" 
+unzip bashmenu.zip
+chmod +x /usr/local/bin/
+
 clear
-echo \> Install finish!
-echo
-echo \> VPS Open Ports
-echo SSH Port: 22
-echo OpenVPN Port: 110
-echo Squid Port: 8080
-echo Privoxy Port: 1025
-echo
-#
+
+echo " "
+echo "Installation has been completed!!"
+echo " Please Reboot your VPS"
+echo "--------------------------- Configuration Setup Server -------------------------"
+echo "                       Ubuntu Script HostingTermurah Based                      "
+echo "                                                                                "
+echo "--------------------------------------------------------------------------------"
+echo "Application & Port Information" 
+echo "   - OpenVPN		: TCP 110 "  
+echo "   - Dropbear		: 22"  
+echo "   - Squid Proxy	: 8080, 1025 (limit to IP Server)"  
 echo \> Download your openvpn config here.
 echo http://$IPADDRESS/config.zip
 echo
-#
-echo \> Rebooting...
-sleep 3
-reboot
+
+
