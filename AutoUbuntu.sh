@@ -1,37 +1,37 @@
 
 # extract ip address
-echo \> GET IPADRESS
+echo  GET IPADRESS
 IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
 sleep 1
 # set time GMT +8
-echo \> Changing Server Time Zone...
+echo  Changing Server Time Zone...
 ln -fs /usr/share/zoneinfo/Asia/Manila /etc/localtime
 sleep 1
 # System Update
-echo /> Sytem Update
+echo  Sytem Update
 apt-get update
 apt-get upgrade
 sleep 1
 # Install Openvpn
-echo /> Installing OPENVPN
+echo  Installing OPENVPN
 apt-get -y install openvpn 
 sleep 1
 # Install Firewall
-echo /> Installing Firewall
+echo  Installing Firewall
 apt-get -y install ufw
 sleep 1
 #Installing Easy-RSA...
-echo /> Installing RSA
+echo  Installing RSA
 apt-get -y install easy-rsa
 sleep 1
 
 #Installing Apache2 Web Server...
-echo /> Installing Apache2
+echo Installing Apache2
 apt-get -y install apache2
 sleep 1
 #Install Squid
-echo /> Installing Squid
+echo  Installing Squid
 apt-get -y install squid
 sleep 1
 #Install Zip
