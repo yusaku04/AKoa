@@ -3,7 +3,7 @@
 
 clear
 # extract ip address
-IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
+IPADDRESS=`ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{print $1}' | head -1`
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
 # clean repo
 apt-get clean
@@ -60,13 +60,13 @@ echo \> Configuring OpenVPN Server Certificate...
 cp -r /usr/share/easy-rsa/ /etc/openvpn
 mkdir /etc/openvpn/easy-rsa/keys
 sed -i 's|export KEY_COUNTRY="US"|export KEY_COUNTRY="PH"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="MSC"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_CITY="SanFrancisco"|export KEY_CITY="Oroquieta City"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="Hayao"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="liernuj25@gmail.com"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_OU="MyOrganizationalUnit"|export KEY_OU="junrielhayao"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_NAME="EasyRSA"|export KEY_NAME="junrielhayao"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_OU=changeme|export KEY_OU=junrielhayao|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="BTG"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_CITY="SanFrancisco"|export KEY_CITY="Batangas City"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="GROME"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="jeromelaliag@yahoo.com"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_OU="MyOrganizationalUnit"|export KEY_OU="jeromelaliag"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_NAME="EasyRSA"|export KEY_NAME="jeromelaliag"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_OU=changeme|export KEY_OU=jeromelaliag|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_SIZE=2048|export KEY_SIZE=1024|' /etc/openvpn/easy-rsa/vars
 # create diffie-helman pem
 openssl dhparam -out /etc/openvpn/dh1024.pem 1024 2> /dev/null
@@ -251,7 +251,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 1025
+http-proxy $IPADDRESS 3356
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.0"
 
@@ -279,7 +279,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 1025
+http-proxy $IPADDRESS 3356
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
 http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
@@ -382,8 +382,8 @@ COMMIT
 -A INPUT -p udp --dport 110  -m state --state NEW -j ACCEPT
 -A INPUT -p tcp --dport 8080  -m state --state NEW -j ACCEPT
 -A INPUT -p udp --dport 8080  -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 1025  -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 1025  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 8118  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 8118  -m state --state NEW -j ACCEPT
 COMMIT
 
 *raw
@@ -436,10 +436,10 @@ echo \> Configuring Uncomplicated Firewall...
 ufw allow ssh > /dev/null
 ufw allow 110/tcp > /dev/null
 ufw allow 8080/tcp > /dev/null
-ufw allow 1025/tcp > /dev/null
+ufw allow 8118/tcp > /dev/null
 ufw allow 110/udp > /dev/null
 ufw allow 8080/udp > /dev/null
-ufw allow 1025/udp > /dev/null
+ufw allow 8118/udp > /dev/null
 sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
 sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
 cat > /etc/ufw/before.rules <<-END
@@ -495,7 +495,7 @@ confdir /etc/privoxy
 logdir /var/log/privoxy
 filterfile default.filter
 logfile logfile
-listen-address  0.0.0.0:1025
+listen-address  0.0.0.0:3356
 listen-address  0.0.0.0:8086
 toggle  1
 enable-remote-toggle  0
@@ -546,7 +546,7 @@ refresh_pattern ^ftp: 1440 20% 10080
 refresh_pattern ^gopher: 1440 0% 1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
-visible_hostname junrielhayao
+visible_hostname jeromelaliag
 
 END
 sed -i $IPADD /etc/squid/squid.conf;
@@ -574,7 +574,7 @@ echo \> VPS Open Ports
 echo SSH Port: 22
 echo OpenVPN Port: 110
 echo Squid Port: 8080
-echo Privoxy Port: 1025
+echo Privoxy Port: 3356
 echo
 sleep 1
 echo \> Download your openvpn config here.
