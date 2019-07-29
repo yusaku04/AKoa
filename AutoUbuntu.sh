@@ -1,91 +1,99 @@
 #!/bin/sh
-# Modifed by Junriel Hayao (Created By: Sir Jerome)
-
-
+# AutoScript Created by Jerome Laliag <jeromelaliag@yahoo.com>
+# Moded By Junriel Hayao(Working in Google Cloud)
 clear
+# Extras
+cd /root
+wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Plugins/plugin.tgz"
+wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip"
 # extract ip address
 IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
 # clean repo
 apt-get clean
 # update repo
-
+echo \> System Updating...
 apt-get update 
-apt-get upgrade
-#
-
-
+sleep 1
+echo \> Done!
+sleep 1
+# full upgrade
+#echo \> System Upgrading...
+#apt-get -y upgrade  2>&1
+#sleep 1
+#echo \> Done!
+#sleep 1
 # install needs
-
+echo \> Installing OpenVPN...
 apt-get -y install openvpn 
-#
-
-#
-
+sleep 1
+echo \> Done!
+sleep 1
+echo \> Installing Uncomplicated Firewall...
 apt-get -y install ufw 
-#
-
-#
-
+sleep 1
+echo \> Done!
+sleep 1
+echo \> Installing Easy-RSA...
 apt-get -y install easy-rsa 
-#
-
-#
-
+sleep 1
+echo \> Done!
+sleep 1
+echo \> Installing Apache2 Web Server...
 apt-get -y install apache2 
-#
-
-#
-
+sleep 1
+echo \> Done!
+sleep 1
+echo \> Installing Squid Proxy Server...
 apt-get -y install squid 
-#
+sleep 1
 echo \> Done!
-#
-
+sleep 1
+echo \> Installing Zip File Compression...
 apt-get -y install zip 
-#
+sleep 1
 echo \> Done!
-#
-.
+sleep 1
+echo \> Installing Privoxy...
 apt-get -y install privoxy 
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # openvpn
-
+echo \> Configuring OpenVPN Server Certificate...
 cp -r /usr/share/easy-rsa/ /etc/openvpn
 mkdir /etc/openvpn/easy-rsa/keys
 sed -i 's|export KEY_COUNTRY="US"|export KEY_COUNTRY="PH"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="MSC"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="NSC"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_CITY="SanFrancisco"|export KEY_CITY="Oroquieta City"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="HAYAO"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="liernuj25@gmail.com"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="HAYAo"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_OU="MyOrganizationalUnit"|export KEY_OU="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_NAME="EasyRSA"|export KEY_NAME="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_OU=changeme|export KEY_OU=junrielhayao|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_SIZE=2048|export KEY_SIZE=1024|' /etc/openvpn/easy-rsa/vars
 # create diffie-helman pem
-openssl dhparam -out /etc/openvpn/dh1024.pem 1024
+openssl dhparam -out /etc/openvpn/dh1024.pem 1024 2
 # create pki
 cd /etc/openvpn/easy-rsa
 . ./vars 
 ./clean-all
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" --initca $* 
+"$EASY_RSA/pkitool" --initca $*  
 # create key server
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" --server server
+"$EASY_RSA/pkitool" --server server  
 # setting key cn
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" client 
+"$EASY_RSA/pkitool" client
 cd
 # copy /etc/openvpn/easy-rsa/keys/{server.crt,server.key,ca.crt} /etc/openvpn
 cp /etc/openvpn/easy-rsa/keys/server.crt /etc/openvpn/server.crt
 cp /etc/openvpn/easy-rsa/keys/server.key /etc/openvpn/server.key
 cp /etc/openvpn/easy-rsa/keys/ca.crt /etc/openvpn/ca.crt
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 echo \> Configuring OpenVPN Server Configuration...
 # setting server
 cat > /etc/openvpn/server.conf <<-END
@@ -114,9 +122,9 @@ tcp-nodelay
 push "dhcp-option DNS 1.1.1.1"
 push "dhcp-option DNS 1.0.0.1"
 END
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # create SUN-NOLOAD openvpn config
 echo \> Generating OpenVPN Client Configuration...
 cat > /root/SUN-NOLOAD.ovpn <<-END
@@ -247,7 +255,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 1025
+http-proxy $IPADDRESS 8118
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.0"
 
@@ -275,7 +283,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 1025
+http-proxy $IPADDRESS 8118
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
 http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
@@ -349,9 +357,9 @@ echo '<ca>' >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
 cat /etc/openvpn/ca.crt >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
 echo>> /root/GLOBE-GOWATCHANDPLAY.ovpn
 echo '</ca>' >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # setting iptables
 echo \> Configuring IPTables Rules...
 cat > /etc/iptables.up.rules <<-END
@@ -378,8 +386,8 @@ COMMIT
 -A INPUT -p udp --dport 110  -m state --state NEW -j ACCEPT
 -A INPUT -p tcp --dport 8080  -m state --state NEW -j ACCEPT
 -A INPUT -p udp --dport 8080  -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 1025  -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 1025  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 8118  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 8118  -m state --state NEW -j ACCEPT
 COMMIT
 
 *raw
@@ -398,44 +406,44 @@ END
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
 sed -i $IPADD /etc/iptables.up.rules;
 iptables-restore < /etc/iptables.up.rules
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # disable ipv6
 echo \> Disabling IPv6...
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # add dns server ipv4
 echo \> Changing DNS to CloudFlare DNS...
 echo "nameserver 1.1.1.1" > /etc/resolv.conf
 echo "nameserver 1.0.0.1" >> /etc/resolv.conf
 sed -i '$ i\echo "nameserver 1.1.1.1" > /etc/resolv.conf' /etc/rc.local
 sed -i '$ i\echo "nameserver 1.0.0.1" >> /etc/resolv.conf' /etc/rc.local
-sed -i '$ i\#0' /etc/rc.local
+sed -i '$ i\sleep 10' /etc/rc.local
 sed -i '$ i\for p in $(pgrep openvpn); do renice -n -20 -p $p; done' /etc/rc.local
 sed -i '$ i\for p in $(pgrep privoxy); do renice -n -20 -p $p; done' /etc/rc.local
 sed -i '$ i\for p in $(pgrep squid); do renice -n -20 -p $p; done' /etc/rc.local
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # set time GMT +8
 echo \> Changing Server Time Zone...
 ln -fs /usr/share/zoneinfo/Asia/Manila /etc/localtime
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # setting ufw
 echo \> Configuring Uncomplicated Firewall...
-ufw allow ssh > /dev/null
-ufw allow 110/tcp > /dev/null
-ufw allow 8080/tcp > /dev/null
-ufw allow 1025/tcp > /dev/null
-ufw allow 110/udp > /dev/null
-ufw allow 8080/udp > /dev/null
-ufw allow 1025/udp > /dev/null
+ufw allow ssh 
+ufw allow 110/tcp 
+ufw allow 8080/tcp 
+ufw allow 8118/tcp 
+ufw allow 110/udp 
+ufw allow 8080/udp 
+ufw allow 8118/udp 
 sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
 sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
 cat > /etc/ufw/before.rules <<-END
@@ -448,17 +456,17 @@ cat > /etc/ufw/before.rules <<-END
 COMMIT
 # END OPENVPN RULES
 END
-echo "y" | ufw enable > /dev/null
-#
+echo "y" | ufw enable 
+sleep 1
 echo \> Done!
-#
+sleep 1
 # set ipv4 forward
 echo \> Configuring IPv4 Forward...
 echo 1 > /proc/sys/net/ipv4/ip_forward
 sed -i 's|#net.ipv4.ip_forward=1|net.ipv4.ip_forward=1|' /etc/sysctl.conf
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # tcp tweaks
 echo \> Applying Kernel TCP Tweaks...
 echo "fs.file-max = 51200" >> /etc/sysctl.conf
@@ -480,9 +488,9 @@ echo "net.ipv4.tcp_rmem = 4096 87380 67108864" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_wmem = 4096 65536 67108864" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_mtu_probing = 1" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_congestion_control = hybla" >> /etc/sysctl.conf
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # configure privoxy
 echo \> Configuring Privoxy...
 cat > /etc/privoxy/config <<-END
@@ -491,28 +499,27 @@ confdir /etc/privoxy
 logdir /var/log/privoxy
 filterfile default.filter
 logfile logfile
-listen-address  0.0.0.0:1025
-listen-address  0.0.0.0:8086
-toggle  1
-enable-remote-toggle  0
-enable-remote-http-toggle  0
+listen-address 0.0.0.0:8118
+toggle 1
+enable-remote-toggle 0
+enable-remote-http-toggle 0
 enable-edit-actions 0
 enforce-blocks 0
 buffer-limit 4096
 enable-proxy-authentication-forwarding 1
-forwarded-connect-retries  1
+forwarded-connect-retries 1
 accept-intercepted-requests 1
 allow-cgi-request-crunching 1
 split-large-forms 0
 keep-alive-timeout 5
 tolerate-pipelining 1
 socket-timeout 300
-permit-access 0.0.0.0/0 xxxxxxxxx
+permit-access 0.0.0.0/0 $IPADDRESS
 
 END
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # configure squid
 echo \> Configuring Squid Proxy Server...
 cat > /etc/squid/squid.conf <<-END
@@ -542,50 +549,55 @@ refresh_pattern ^ftp: 1440 20% 10080
 refresh_pattern ^gopher: 1440 0% 1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
-
+visible_hostname jeromelaliag
 
 END
 sed -i $IPADD /etc/squid/squid.conf;
-#
+sleep 1
 echo \> Done!
-#
+sleep 1
 # Generating config in 1 zip file
 echo \> Compressing OpenVPN Configuration to Zip File...
 cd /root/
-zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn > /dev/null
-#
+zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn 
+sleep 1
 echo \> Done!
-#
+sleep 1
 # Add openvpn user
 echo \> Adding default OpenVPN User...
-useradd adminko
-echo "adminko:adminko" | chpasswd
-#
+useradd openvpn
+echo "openvpn:0p3nvpn143" | chpasswd
+sleep 1
 echo \> Done!
-#
+sleep 1
+# install screenfetch
+cd
+wget -O /usr/bin/screenfetch "https://raw.githubusercontent.com/johndesu090/AutoScriptDebianStretch/master/Files/Plugins/screenfetch"
+chmod +x /usr/bin/screenfetch
+echo "clear" >> .profile
+echo "screenfetch" >> .profile
 
 # Configure menu
 apt-get install unzip
 cd /usr/local/bin/
-wget "https://github.com/yusaku04/AKoa/raw/master/Files/Menu/bashmenu.zip" 
+wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip" 
 unzip bashmenu.zip
-chmod +x /usr/local/bin/
+chmod +x /usr/local/bin/*
 
 clear
-
-echo " "
-echo "Installation has been completed!!"
-echo " Please Reboot your VPS"
-echo "--------------------------- Configuration Setup Server -------------------------"
-echo "                       Ubuntu Script HostingTermurah Based                      "
-echo "                                                                                "
-echo "--------------------------------------------------------------------------------"
-echo "Application & Port Information" 
-echo "   - OpenVPN		: TCP 110 "  
-echo "   - Dropbear		: 22"  
-echo "   - Squid Proxy	: 8080, 1025 (limit to IP Server)"  
+echo \> Install finish!
+echo
+echo \> VPS Open Ports
+echo SSH Port: 22
+echo OpenVPN Port: 110
+echo Squid Port: 8080
+echo Privoxy Port: 8118
+echo
+sleep 1
 echo \> Download your openvpn config here.
 echo http://$IPADDRESS/config.zip
 echo
-
-
+sleep 1
+echo \> Rebooting...
+sleep 3
+reboot
