@@ -3,7 +3,7 @@
 
 clear
 # extract ip address
-IPADDRESS=`ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{print $1}' | head -1`
+IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
 # clean repo
 apt-get clean
