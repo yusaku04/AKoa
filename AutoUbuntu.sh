@@ -7,6 +7,7 @@ cd /root
 wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Plugins/plugin.tgz"
 wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip"
 # install screenfetch
+echo \> Installing Screenfetch
 cd
 wget -O /usr/bin/screenfetch "https://raw.githubusercontent.com/johndesu090/AutoScriptDebianStretch/master/Files/Plugins/screenfetch"
 chmod +x /usr/bin/screenfetch
@@ -14,6 +15,7 @@ echo "clear" >> .profile
 echo "screenfetch" >> .profile
 
 # Configure menu
+echo \> Configure Menu
 apt-get install unzip
 cd /usr/local/bin/
 wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip" 
