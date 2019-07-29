@@ -251,7 +251,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8118
+http-proxy $IPADDRESS 1025
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.0"
 
@@ -279,7 +279,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8118
+http-proxy $IPADDRESS 1025
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
 http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
@@ -382,8 +382,8 @@ COMMIT
 -A INPUT -p udp --dport 110  -m state --state NEW -j ACCEPT
 -A INPUT -p tcp --dport 8080  -m state --state NEW -j ACCEPT
 -A INPUT -p udp --dport 8080  -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 8118  -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 8118  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 1025  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 1025  -m state --state NEW -j ACCEPT
 COMMIT
 
 *raw
@@ -436,10 +436,10 @@ echo \> Configuring Uncomplicated Firewall...
 ufw allow ssh > /dev/null
 ufw allow 110/tcp > /dev/null
 ufw allow 8080/tcp > /dev/null
-ufw allow 8118/tcp > /dev/null
+ufw allow 1025/tcp > /dev/null
 ufw allow 110/udp > /dev/null
 ufw allow 8080/udp > /dev/null
-ufw allow 8118/udp > /dev/null
+ufw allow 1025/udp > /dev/null
 sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
 sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
 cat > /etc/ufw/before.rules <<-END
@@ -495,22 +495,23 @@ confdir /etc/privoxy
 logdir /var/log/privoxy
 filterfile default.filter
 logfile logfile
-listen-address 0.0.0.0:8118
-toggle 1
-enable-remote-toggle 0
-enable-remote-http-toggle 0
+listen-address  0.0.0.0:1025
+listen-address  0.0.0.0:8086
+toggle  1
+enable-remote-toggle  0
+enable-remote-http-toggle  0
 enable-edit-actions 0
 enforce-blocks 0
 buffer-limit 4096
 enable-proxy-authentication-forwarding 1
-forwarded-connect-retries 1
+forwarded-connect-retries  1
 accept-intercepted-requests 1
 allow-cgi-request-crunching 1
 split-large-forms 0
 keep-alive-timeout 5
 tolerate-pipelining 1
 socket-timeout 300
-permit-access 0.0.0.0/0 $IPADDRESS
+permit-access 0.0.0.0/0 xxxxxxxxx
 
 END
 sleep 1
@@ -573,7 +574,7 @@ echo \> VPS Open Ports
 echo SSH Port: 22
 echo OpenVPN Port: 110
 echo Squid Port: 8080
-echo Privoxy Port: 8118
+echo Privoxy Port: 1025
 echo
 sleep 1
 echo \> Download your openvpn config here.
