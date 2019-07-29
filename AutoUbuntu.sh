@@ -3,8 +3,9 @@
 
 clear
 # extract ip address
-IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
+IPADDRESS=`ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{print $1}' | head -1`
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
+MYIP=$(wget -qO- ipv4.icanhazip.com);
 # clean repo
 apt-get clean
 # update repo
@@ -127,7 +128,7 @@ cat > /root/SUN-NOLOAD.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 bind
@@ -154,7 +155,7 @@ cat > /root/SUN-TU200.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -168,7 +169,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8080
+http-proxy $MYIP 8080
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host line.telegram.me
 http-proxy-option CUSTOM-HEADER X-Online-Host line.telegram.me
@@ -186,7 +187,7 @@ cat > /root/DEFAULT-NO-PROXY.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -211,7 +212,7 @@ cat > /root/DEFAULT-WITH-PROXY.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -225,7 +226,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8080
+http-proxy $MYIP 8080
 
 END
 echo '<ca>' >> /root/DEFAULT-WITH-PROXY.ovpn
@@ -237,7 +238,7 @@ cat > /root/SUN-CTC-TU50.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -251,7 +252,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 3356
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.0"
 
@@ -265,7 +266,7 @@ cat > /root/SUN-FLP.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -279,7 +280,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 3356
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
 http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
@@ -294,7 +295,7 @@ cat > /root/GLOBE-GOWATCHANDPLAY.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -308,7 +309,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8080
+http-proxy $MYIP 8080
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host i.ytimg.com
 http-proxy-option CUSTOM-HEADER X-Online-Host i.ytimg.com
@@ -326,7 +327,7 @@ cat > /root/GLOBE-GOWATCHANDPLAY2.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -340,7 +341,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8080
+http-proxy $MYIP 8080
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host www.googleapis.com
 http-proxy-option CUSTOM-HEADER X-Online-Host www.googleapis.com
@@ -578,7 +579,7 @@ echo Privoxy Port: 3356
 echo
 sleep 1
 echo \> Download your openvpn config here.
-echo http://$IPADDRESS/config.zip
+echo http://$MYIP/config.zip
 echo
 sleep 1
 echo \> Rebooting...
