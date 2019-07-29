@@ -564,7 +564,7 @@ sleep 1
 # Add openvpn user
 echo \> Adding default OpenVPN User...
 useradd openvpn
-echo "openvpn:0p3nvpn143" | chpasswd
+echo "openvpn:openvpn" | chpasswd
 sleep 1
 echo \> Done!
 sleep 1
