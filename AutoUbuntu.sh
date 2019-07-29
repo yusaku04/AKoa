@@ -1,26 +1,7 @@
 #!/bin/sh
 # AutoScript Created by Jerome Laliag <jeromelaliag@yahoo.com>
-# Moded By Junriel Hayao(Working in Google Cloud)
-clear
-# Extras
-cd /root
-wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Plugins/plugin.tgz"
-wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip"
-# install screenfetch
-echo \> Installing Screenfetch
-cd
-wget -O /usr/bin/screenfetch "https://raw.githubusercontent.com/johndesu090/AutoScriptDebianStretch/master/Files/Plugins/screenfetch"
-chmod +x /usr/bin/screenfetch
-echo "clear" >> .profile
-echo "screenfetch" >> .profile
 
-# Configure menu
-echo \> Configure Menu
-apt-get install unzip
-cd /usr/local/bin/
-wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip" 
-unzip bashmenu.zip
-chmod +x /usr/local/bin/*
+clear
 # extract ip address
 IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
@@ -28,49 +9,49 @@ IPADD="s/ipaddresxxx/$IPADDRESS/g";
 apt-get clean
 # update repo
 echo \> System Updating...
-apt-get update 
+apt-get update > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 # full upgrade
 #echo \> System Upgrading...
-#apt-get -y upgrade  2>&1
+#apt-get -y upgrade > /dev/null 2>&1
 #sleep 1
 #echo \> Done!
 #sleep 1
 # install needs
 echo \> Installing OpenVPN...
-apt-get -y install openvpn 
+apt-get -y install openvpn > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 echo \> Installing Uncomplicated Firewall...
-apt-get -y install ufw 
+apt-get -y install ufw > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 echo \> Installing Easy-RSA...
-apt-get -y install easy-rsa 
+apt-get -y install easy-rsa > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 echo \> Installing Apache2 Web Server...
-apt-get -y install apache2 
+apt-get -y install apache2 > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 echo \> Installing Squid Proxy Server...
-apt-get -y install squid 
+apt-get -y install squid > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 echo \> Installing Zip File Compression...
-apt-get -y install zip 
+apt-get -y install zip > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
 echo \> Installing Privoxy...
-apt-get -y install privoxy 
+apt-get -y install privoxy > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
@@ -79,28 +60,28 @@ echo \> Configuring OpenVPN Server Certificate...
 cp -r /usr/share/easy-rsa/ /etc/openvpn
 mkdir /etc/openvpn/easy-rsa/keys
 sed -i 's|export KEY_COUNTRY="US"|export KEY_COUNTRY="PH"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="NSC"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="MSC"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_CITY="SanFrancisco"|export KEY_CITY="Oroquieta City"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="HAYAo"|' /etc/openvpn/easy-rsa/vars
-sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="junrielhayao"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="Hayao"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="liernuj25@gmail.com"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_OU="MyOrganizationalUnit"|export KEY_OU="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_NAME="EasyRSA"|export KEY_NAME="junrielhayao"|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_OU=changeme|export KEY_OU=junrielhayao|' /etc/openvpn/easy-rsa/vars
 sed -i 's|export KEY_SIZE=2048|export KEY_SIZE=1024|' /etc/openvpn/easy-rsa/vars
 # create diffie-helman pem
-openssl dhparam -out /etc/openvpn/dh1024.pem 1024 2
+openssl dhparam -out /etc/openvpn/dh1024.pem 1024 2> /dev/null
 # create pki
 cd /etc/openvpn/easy-rsa
-. ./vars 
+. ./vars > /dev/null
 ./clean-all
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" --initca $*  
+"$EASY_RSA/pkitool" --initca $* > /dev/null 2>&1
 # create key server
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" --server server  
+"$EASY_RSA/pkitool" --server server > /dev/null 2>&1
 # setting key cn
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" client
+"$EASY_RSA/pkitool" client > /dev/null 2>&1
 cd
 # copy /etc/openvpn/easy-rsa/keys/{server.crt,server.key,ca.crt} /etc/openvpn
 cp /etc/openvpn/easy-rsa/keys/server.crt /etc/openvpn/server.crt
@@ -452,13 +433,13 @@ echo \> Done!
 sleep 1
 # setting ufw
 echo \> Configuring Uncomplicated Firewall...
-ufw allow ssh 
-ufw allow 110/tcp 
-ufw allow 8080/tcp 
-ufw allow 8118/tcp 
-ufw allow 110/udp 
-ufw allow 8080/udp 
-ufw allow 8118/udp 
+ufw allow ssh > /dev/null
+ufw allow 110/tcp > /dev/null
+ufw allow 8080/tcp > /dev/null
+ufw allow 8118/tcp > /dev/null
+ufw allow 110/udp > /dev/null
+ufw allow 8080/udp > /dev/null
+ufw allow 8118/udp > /dev/null
 sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
 sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
 cat > /etc/ufw/before.rules <<-END
@@ -471,7 +452,7 @@ cat > /etc/ufw/before.rules <<-END
 COMMIT
 # END OPENVPN RULES
 END
-echo "y" | ufw enable 
+echo "y" | ufw enable > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
@@ -564,7 +545,7 @@ refresh_pattern ^ftp: 1440 20% 10080
 refresh_pattern ^gopher: 1440 0% 1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
-
+visible_hostname junrielhayao
 
 END
 sed -i $IPADD /etc/squid/squid.conf;
@@ -574,7 +555,7 @@ sleep 1
 # Generating config in 1 zip file
 echo \> Compressing OpenVPN Configuration to Zip File...
 cd /root/
-zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn 
+zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
@@ -585,8 +566,6 @@ echo "openvpn:0p3nvpn143" | chpasswd
 sleep 1
 echo \> Done!
 sleep 1
-
-
 clear
 echo \> Install finish!
 echo
