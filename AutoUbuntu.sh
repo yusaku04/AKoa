@@ -585,19 +585,7 @@ echo "openvpn:0p3nvpn143" | chpasswd
 sleep 1
 echo \> Done!
 sleep 1
-# install screenfetch
-cd
-wget -O /usr/bin/screenfetch "https://raw.githubusercontent.com/johndesu090/AutoScriptDebianStretch/master/Files/Plugins/screenfetch"
-chmod +x /usr/bin/screenfetch
-echo "clear" >> .profile
-echo "screenfetch" >> .profile
 
-# Configure menu
-apt-get install unzip
-cd /usr/local/bin/
-wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip" 
-unzip bashmenu.zip
-chmod +x /usr/local/bin/*
 
 clear
 echo \> Install finish!
