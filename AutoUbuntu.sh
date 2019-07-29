@@ -6,6 +6,19 @@ clear
 cd /root
 wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Plugins/plugin.tgz"
 wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip"
+# install screenfetch
+cd
+wget -O /usr/bin/screenfetch "https://raw.githubusercontent.com/johndesu090/AutoScriptDebianStretch/master/Files/Plugins/screenfetch"
+chmod +x /usr/bin/screenfetch
+echo "clear" >> .profile
+echo "screenfetch" >> .profile
+
+# Configure menu
+apt-get install unzip
+cd /usr/local/bin/
+wget "https://github.com/johndesu090/AutoScriptDebianStretch/raw/master/Files/Menu/bashmenu.zip" 
+unzip bashmenu.zip
+chmod +x /usr/local/bin/*
 # extract ip address
 IPADDRESS=$(wget -qO- ipv4.icanhazip.com);
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
@@ -549,7 +562,7 @@ refresh_pattern ^ftp: 1440 20% 10080
 refresh_pattern ^gopher: 1440 0% 1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
-visible_hostname jeromelaliag
+
 
 END
 sed -i $IPADD /etc/squid/squid.conf;
