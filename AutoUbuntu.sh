@@ -169,7 +169,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $MYIP 8080
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host line.telegram.me
 http-proxy-option CUSTOM-HEADER X-Online-Host line.telegram.me
@@ -226,7 +226,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $MYIP 8080
+http-proxy $MYIP 3356
 
 END
 echo '<ca>' >> /root/DEFAULT-WITH-PROXY.ovpn
@@ -309,7 +309,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $MYIP 8080
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host i.ytimg.com
 http-proxy-option CUSTOM-HEADER X-Online-Host i.ytimg.com
@@ -341,7 +341,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $MYIP 8080
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host www.googleapis.com
 http-proxy-option CUSTOM-HEADER X-Online-Host www.googleapis.com
