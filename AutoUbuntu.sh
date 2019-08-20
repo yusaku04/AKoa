@@ -561,6 +561,20 @@ zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GL
 sleep 1
 echo \> Done!
 sleep 1
+
+#Installing Webmin
+cd
+wget "https://raw.githubusercontent.com/yusaku04/AKoa/master/webmin_1.801_all.deb"
+dpkg --install webmin_1.801_all.deb;
+apt-get -y -f install;
+sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
+rm /root/webmin_1.801_all.deb
+service webmin restart
+
+
+# install libxml-parser
+apt-get install -y libxml-parser-perl
+
 # Add openvpn user
 echo \> Adding default OpenVPN User...
 useradd openvpn
