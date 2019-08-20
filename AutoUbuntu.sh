@@ -563,6 +563,7 @@ echo \> Done!
 sleep 1
 
 #Installing Webmin
+apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python
 cd
 wget "https://raw.githubusercontent.com/yusaku04/AKoa/master/webmin_1.801_all.deb" 
 dpkg --install webmin_1.801_all.deb;
