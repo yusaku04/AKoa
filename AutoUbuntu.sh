@@ -564,16 +564,16 @@ sleep 1
 
 #Installing Webmin
 cd
-wget "https://raw.githubusercontent.com/yusaku04/AKoa/master/webmin_1.801_all.deb"
+wget "https://raw.githubusercontent.com/yusaku04/AKoa/master/webmin_1.801_all.deb" > /dev/null
 dpkg --install webmin_1.801_all.deb;
-apt-get -y -f install;
+apt-get -y -f install >/dev/null;
 sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
-rm /root/webmin_1.801_all.deb
-service webmin restart
+rm /root/webmin_1.801_all.deb > /dev/null
+service webmin restart > /dev/null
 
 
 # install libxml-parser
-apt-get install -y libxml-parser-perl
+apt-get install -y libxml-parser-perl > /dev/null
 
 # Add openvpn user
 echo \> Adding default OpenVPN User...
