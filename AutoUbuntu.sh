@@ -591,7 +591,7 @@ sleep 1
 # Generating config in 1 zip file
 echo \> Compressing OpenVPN Configuration to Zip File...
 cd /root/
-zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn > /dev/null
+zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn TNT-ML10-GAMETIME.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
