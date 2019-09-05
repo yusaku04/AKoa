@@ -261,6 +261,40 @@ echo '<ca>' >> /root/SUN-CTC-TU50.ovpn
 cat /etc/openvpn/ca.crt >> /root/SUN-CTC-TU50.ovpn
 echo>> /root/SUN-CTC-TU50.ovpn
 echo '</ca>' >> /root/SUN-CTC-TU50.ovpn
+
+# create TNT-ML10-GAMETIME openvpn config
+cat > /root/TNT-ML10-GAMETIME.ovpn <<-END
+client
+dev tun
+proto tcp-client
+remote $MYIP 110
+persist-key
+persist-tun
+remote-cert-tls server
+verb 3
+auth-user-pass
+redirect-gateway def1
+cipher none
+auth none
+auth-nocache
+auth-retry interact
+connect-retry 0 1
+nice -20
+reneg-sec 0
+http-proxy $MYIP 3356
+http-proxy-option CUSTOM-HEADER "CONNECT HTTP/1.1"
+http-proxy-option CUSTOM-HEADER "Host: cdn.ml.youngjoygame.com"
+http-proxy-option CUSTOM-HEADER "X-Online-Host: cdn.ml.youngjoygame.com"
+http-proxy-option CUSTOM-HEADER X-Forward-Host: cdn.ml.youngjoygame.com"
+http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
+http-proxy-option CUSTOM-HEADER "Connection: Keep-Alive"
+
+END
+echo '<ca>' >> /root/TNT-ML10-GAMETIME.ovpn
+cat /etc/openvpn/ca.crt >> /root/TNT-ML10-GAMETIME.ovpn
+echo>> /root/TNT-ML10-GAMETIME.ovpn
+echo '</ca>' >> /TNT-ML10-GAMETIME.ovpn
+
 # create SUN-FLP openvpn config
 cat > /root/SUN-FLP.ovpn <<-END
 client
