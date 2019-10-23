@@ -597,8 +597,6 @@ echo \> Done!
 sleep 1
 
 
-# install libxml-parser
-apt-get install -y libxml-parser-perl 
 
 # Add openvpn user
 echo \> Adding default OpenVPN User...
