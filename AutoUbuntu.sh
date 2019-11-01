@@ -750,10 +750,15 @@ service webmin restart
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 echo \> Done!
 
 
 sleep 1
+=======
+# install libxml-parser
+apt-get install -y libxml-parser-perl 
+>>>>>>> parent of 8bd33ba... Update AutoUbuntu.sh
 =======
 # install libxml-parser
 apt-get install -y libxml-parser-perl 
