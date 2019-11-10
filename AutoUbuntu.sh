@@ -3,79 +3,59 @@
 
 clear
 # extract ip address
-IPADDRESS=$(wget -qO- ipv4.icanhazip.com)
+IPADDRESS=`ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{print $1}' | head -1`
 IPADD="s/ipaddresxxx/$IPADDRESS/g";
+MYIP=$(wget -qO- ipv4.icanhazip.com);
 # clean repo
 apt-get clean
 # update repo
 echo \> System Updating...
-apt-get update
+apt-get update > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
-# system upgrade
-echo \> System Upgrading...
-apt-get -y upgrade
-sleep 1
-echo \> Done!
-sleep 1
-clear
+# full upgrade
+#echo \> System Upgrading...
+#apt-get -y upgrade > /dev/null 2>&1
+#sleep 1
+#echo \> Done!
+#sleep 1
 # install needs
 echo \> Installing OpenVPN...
-apt-get -y install openvpn
+apt-get -y install openvpn > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
-echo \> Installing SSH Dropbear...
-apt-get -y install dropbear
-sleep 1
-echo \> Done!
-sleep 1
-clear
-echo \> Installing stunnel4...
-apt-get -y install stunnel4
-sleep 1
-echo \> Done!
-sleep 1
-clear
 echo \> Installing Uncomplicated Firewall...
-apt-get -y install ufw
+apt-get -y install ufw > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
 echo \> Installing Easy-RSA...
-apt-get -y install easy-rsa
+apt-get -y install easy-rsa > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
-echo \> Installing Micro HTTPD...
-apt-get -y install micro-httpd
+echo \> Installing Apache2 Web Server...
+apt-get -y install apache2 > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
 echo \> Installing Squid Proxy Server...
-apt-get -y install squid
+apt-get -y install squid > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
 echo \> Installing Zip File Compression...
-apt-get -y install zip
+apt-get -y install zip > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
 echo \> Installing Privoxy...
-apt-get -y install privoxy
+apt-get -y install privoxy > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # openvpn
 echo \> Configuring OpenVPN Server Certificate...
 cp -r /usr/share/easy-rsa/ /etc/openvpn
@@ -93,16 +73,16 @@ sed -i 's|export KEY_SIZE=2048|export KEY_SIZE=1024|' /etc/openvpn/easy-rsa/vars
 openssl dhparam -out /etc/openvpn/dh1024.pem 1024 2> /dev/null
 # create pki
 cd /etc/openvpn/easy-rsa
-. ./vars
+. ./vars > /dev/null
 ./clean-all
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" --initca $*
+"$EASY_RSA/pkitool" --initca $* > /dev/null 2>&1
 # create key server
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" --server server
+"$EASY_RSA/pkitool" --server server > /dev/null 2>&1
 # setting key cn
 export EASY_RSA="${EASY_RSA:-.}"
-"$EASY_RSA/pkitool" client
+"$EASY_RSA/pkitool" client > /dev/null 2>&1
 cd
 # copy /etc/openvpn/easy-rsa/keys/{server.crt,server.key,ca.crt} /etc/openvpn
 cp /etc/openvpn/easy-rsa/keys/server.crt /etc/openvpn/server.crt
@@ -111,7 +91,6 @@ cp /etc/openvpn/easy-rsa/keys/ca.crt /etc/openvpn/ca.crt
 sleep 1
 echo \> Done!
 sleep 1
-clear
 echo \> Configuring OpenVPN Server Configuration...
 # setting server
 cat > /etc/openvpn/server.conf <<-END
@@ -143,22 +122,13 @@ END
 sleep 1
 echo \> Done!
 sleep 1
-clear
-# configuring ssh dropbear
-echo \> Configuring SSH Dropbear Configuration...
-sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
-sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=222/g' /etc/default/dropbear
-sleep 1
-echo \> Done!
-sleep 1
-clear
 # create SUN-NOLOAD openvpn config
 echo \> Generating OpenVPN Client Configuration...
 cat > /root/SUN-NOLOAD.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 bind
@@ -185,7 +155,7 @@ cat > /root/SUN-TU200.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -199,7 +169,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8080
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
 http-proxy-option CUSTOM-HEADER Host line.telegram.me
 http-proxy-option CUSTOM-HEADER X-Online-Host line.telegram.me
@@ -217,7 +187,7 @@ cat > /root/DEFAULT-NO-PROXY.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -242,7 +212,7 @@ cat > /root/DEFAULT-WITH-PROXY.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -256,7 +226,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8080
+http-proxy $MYIP 3356
 
 END
 echo '<ca>' >> /root/DEFAULT-WITH-PROXY.ovpn
@@ -268,7 +238,7 @@ cat > /root/SUN-CTC-TU50.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote $IPADDRESS 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -282,7 +252,7 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-http-proxy $IPADDRESS 8118
+http-proxy $MYIP 3356
 http-proxy-option CUSTOM-HEADER ""
 http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.0"
 
@@ -291,100 +261,6 @@ echo '<ca>' >> /root/SUN-CTC-TU50.ovpn
 cat /etc/openvpn/ca.crt >> /root/SUN-CTC-TU50.ovpn
 echo>> /root/SUN-CTC-TU50.ovpn
 echo '</ca>' >> /root/SUN-CTC-TU50.ovpn
-# create SUN-FLP openvpn config
-cat > /root/SUN-FLP.ovpn <<-END
-client
-dev tun
-proto tcp-client
-remote $IPADDRESS 110
-persist-key
-persist-tun
-remote-cert-tls server
-verb 3
-auth-user-pass
-redirect-gateway def1
-cipher none
-auth none
-auth-nocache
-auth-retry interact
-connect-retry 0 1
-nice -20
-reneg-sec 0
-http-proxy $IPADDRESS 8118
-http-proxy-option CUSTOM-HEADER ""
-http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
-http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
-
-END
-echo '<ca>' >> /root/SUN-FLP.ovpn
-cat /etc/openvpn/ca.crt >> /root/SUN-FLP.ovpn
-echo>> /root/SUN-FLP.ovpn
-echo '</ca>' >> /root/SUN-FLP.ovpn
-# create GLOBE-GOWATCHANDPLAY openvpn config
-cat > /root/GLOBE-GOWATCHANDPLAY.ovpn <<-END
-client
-dev tun
-proto tcp-client
-remote $IPADDRESS 110
-persist-key
-persist-tun
-remote-cert-tls server
-verb 3
-auth-user-pass
-redirect-gateway def1
-cipher none
-auth none
-auth-nocache
-auth-retry interact
-connect-retry 0 1
-nice -20
-reneg-sec 0
-http-proxy $IPADDRESS 8080
-http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
-http-proxy-option CUSTOM-HEADER Host i.ytimg.com
-http-proxy-option CUSTOM-HEADER X-Online-Host i.ytimg.com
-http-proxy-option CUSTOM-HEADER X-Forward-Host i.ytimg.com
-http-proxy-option CUSTOM-HEADER Connection keep-alive
-http-proxy-option CUSTOM-HEADER Proxy-Connection keep-alive
-
-END
-echo '<ca>' >> /root/GLOBE-GOWATCHANDPLAY.ovpn
-cat /etc/openvpn/ca.crt >> /root/GLOBE-GOWATCHANDPLAY.ovpn
-echo>> /root/GLOBE-GOWATCHANDPLAY.ovpn
-echo '</ca>' >> /root/GLOBE-GOWATCHANDPLAY.ovpn
-# create GLOBE-GOWATCHANDPLAY2 openvpn config
-cat > /root/GLOBE-GOWATCHANDPLAY2.ovpn <<-END
-client
-dev tun
-proto tcp-client
-remote $IPADDRESS 110
-persist-key
-persist-tun
-remote-cert-tls server
-verb 3
-auth-user-pass
-redirect-gateway def1
-cipher none
-auth none
-auth-nocache
-auth-retry interact
-connect-retry 0 1
-nice -20
-reneg-sec 0
-http-proxy $IPADDRESS 8080
-http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
-http-proxy-option CUSTOM-HEADER Host www.googleapis.com
-http-proxy-option CUSTOM-HEADER X-Online-Host www.googleapis.com
-http-proxy-option CUSTOM-HEADER X-Forward-Host www.googleapis.com
-http-proxy-option CUSTOM-HEADER Connection keep-alive
-http-proxy-option CUSTOM-HEADER Proxy-Connection keep-alive
-
-END
-echo '<ca>' >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
-cat /etc/openvpn/ca.crt >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
-echo>> /root/GLOBE-GOWATCHANDPLAY.ovpn
-echo '</ca>' >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
-
 
 # create TNT-ML10-GAMETIME openvpn config
 cat > /root/TNT-ML10-GAMETIME.ovpn <<-END
@@ -419,13 +295,12 @@ cat /etc/openvpn/ca.crt >> /root/TNT-ML10-GAMETIME.ovpn
 echo>> /root/TNT-ML10-GAMETIME.ovpn
 echo '</ca>' >> /root/TNT-ML10-GAMETIME.ovpn
 
-
-# create OPENVPNSTUNNEL config
-cat > /root/OPENVPNSTUNNEL.ovpn <<-END
+# create SUN-FLP openvpn config
+cat > /root/SUN-FLP.ovpn <<-END
 client
 dev tun
 proto tcp-client
-remote 127.0.0.1 110
+remote $MYIP 110
 persist-key
 persist-tun
 remote-cert-tls server
@@ -439,17 +314,83 @@ auth-retry interact
 connect-retry 0 1
 nice -20
 reneg-sec 0
-route $IPADDRESS 255.255.255.255 net_gateway
+http-proxy $MYIP 3356
+http-proxy-option CUSTOM-HEADER ""
+http-proxy-option CUSTOM-HEADER "POST https://viber.com HTTP/1.1"
+http-proxy-option CUSTOM-HEADER "Proxy-Connection: Keep-Alive"
 
 END
-echo '<ca>' >> /root/OPENVPNSTUNNEL.ovpn
-cat /etc/openvpn/ca.crt >> /root/OPENVPNSTUNNEL.ovpn
-echo>> /root/OPENVPNSTUNNEL.ovpn
-echo '</ca>' >> /root/OPENVPNSTUNNEL.ovpn
+echo '<ca>' >> /root/SUN-FLP.ovpn
+cat /etc/openvpn/ca.crt >> /root/SUN-FLP.ovpn
+echo>> /root/SUN-FLP.ovpn
+echo '</ca>' >> /root/SUN-FLP.ovpn
+# create GLOBE-GOWATCHANDPLAY openvpn config
+cat > /root/GLOBE-GOWATCHANDPLAY.ovpn <<-END
+client
+dev tun
+proto tcp-client
+remote $MYIP 110
+persist-key
+persist-tun
+remote-cert-tls server
+verb 3
+auth-user-pass
+redirect-gateway def1
+cipher none
+auth none
+auth-nocache
+auth-retry interact
+connect-retry 0 1
+nice -20
+reneg-sec 0
+http-proxy $MYIP 3356
+http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
+http-proxy-option CUSTOM-HEADER Host i.ytimg.com
+http-proxy-option CUSTOM-HEADER X-Online-Host i.ytimg.com
+http-proxy-option CUSTOM-HEADER X-Forward-Host i.ytimg.com
+http-proxy-option CUSTOM-HEADER Connection keep-alive
+http-proxy-option CUSTOM-HEADER Proxy-Connection keep-alive
+
+END
+echo '<ca>' >> /root/GLOBE-GOWATCHANDPLAY.ovpn
+cat /etc/openvpn/ca.crt >> /root/GLOBE-GOWATCHANDPLAY.ovpn
+echo>> /root/GLOBE-GOWATCHANDPLAY.ovpn
+echo '</ca>' >> /root/GLOBE-GOWATCHANDPLAY.ovpn
+# create GLOBE-GOWATCHANDPLAY2 openvpn config
+cat > /root/GLOBE-GOWATCHANDPLAY2.ovpn <<-END
+client
+dev tun
+proto tcp-client
+remote $MYIP 110
+persist-key
+persist-tun
+remote-cert-tls server
+verb 3
+auth-user-pass
+redirect-gateway def1
+cipher none
+auth none
+auth-nocache
+auth-retry interact
+connect-retry 0 1
+nice -20
+reneg-sec 0
+http-proxy $MYIP 3356
+http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.0
+http-proxy-option CUSTOM-HEADER Host www.googleapis.com
+http-proxy-option CUSTOM-HEADER X-Online-Host www.googleapis.com
+http-proxy-option CUSTOM-HEADER X-Forward-Host www.googleapis.com
+http-proxy-option CUSTOM-HEADER Connection keep-alive
+http-proxy-option CUSTOM-HEADER Proxy-Connection keep-alive
+
+END
+echo '<ca>' >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
+cat /etc/openvpn/ca.crt >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
+echo>> /root/GLOBE-GOWATCHANDPLAY.ovpn
+echo '</ca>' >> /root/GLOBE-GOWATCHANDPLAY2.ovpn
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # setting iptables
 echo \> Configuring IPTables Rules...
 cat > /etc/iptables.up.rules <<-END
@@ -471,27 +412,13 @@ COMMIT
 -A FORWARD -i ppp0 -o eth0 -j ACCEPT
 -A INPUT -p ICMP --icmp-type 8 -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT
--A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 80 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 110 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 222 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 222 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 443 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 444 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 444 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 3128 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 3128 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 8000 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 8000 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 8008 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 8008 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 8080 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 8080 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 8118 -m state --state NEW -j ACCEPT
--A INPUT -p udp --dport 8118 -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 22  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 110  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 110  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 8080  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 8080  -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 8118  -m state --state NEW -j ACCEPT
+-A INPUT -p udp --dport 8118  -m state --state NEW -j ACCEPT
 COMMIT
 
 *raw
@@ -513,7 +440,13 @@ iptables-restore < /etc/iptables.up.rules
 sleep 1
 echo \> Done!
 sleep 1
-clear
+# disable ipv6
+echo \> Disabling IPv6...
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
+sleep 1
+echo \> Done!
+sleep 1
 # add dns server ipv4
 echo \> Changing DNS to CloudFlare DNS...
 echo "nameserver 1.1.1.1" > /etc/resolv.conf
@@ -524,42 +457,24 @@ sed -i '$ i\sleep 10' /etc/rc.local
 sed -i '$ i\for p in $(pgrep openvpn); do renice -n -20 -p $p; done' /etc/rc.local
 sed -i '$ i\for p in $(pgrep privoxy); do renice -n -20 -p $p; done' /etc/rc.local
 sed -i '$ i\for p in $(pgrep squid); do renice -n -20 -p $p; done' /etc/rc.local
-sed -i '$ i\for p in $(pgrep dropbear); do renice -n -20 -p $p; done' /etc/rc.local
-sed -i '$ i\for p in $(pgrep stunnel4); do renice -n -20 -p $p; done' /etc/rc.local
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # set time GMT +8
 echo \> Changing Server Time Zone...
 ln -fs /usr/share/zoneinfo/Asia/Manila /etc/localtime
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # setting ufw
 echo \> Configuring Uncomplicated Firewall...
-ufw allow ssh
-ufw allow 80/tcp
-ufw allow 110/tcp
-ufw allow 222/tcp
-ufw allow 443/tcp
-ufw allow 444/tcp
-ufw allow 3128/tcp
-ufw allow 8000/tcp
-ufw allow 8008/tcp
-ufw allow 8080/tcp
-ufw allow 8118/tcp
-ufw allow 80/udp
-ufw allow 110/udp
-ufw allow 222/udp
-ufw allow 443/udp
-ufw allow 444/udp
-ufw allow 3128/udp
-ufw allow 8000/udp
-ufw allow 8008/udp
-ufw allow 8080/udp
-ufw allow 8118/udp
+ufw allow ssh > /dev/null
+ufw allow 110/tcp > /dev/null
+ufw allow 8080/tcp > /dev/null
+ufw allow 8118/tcp > /dev/null
+ufw allow 110/udp > /dev/null
+ufw allow 8080/udp > /dev/null
+ufw allow 8118/udp > /dev/null
 sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
 sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
 cat > /etc/ufw/before.rules <<-END
@@ -572,11 +487,10 @@ cat > /etc/ufw/before.rules <<-END
 COMMIT
 # END OPENVPN RULES
 END
-echo "y" | ufw enable
+echo "y" | ufw enable > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # set ipv4 forward
 echo \> Configuring IPv4 Forward...
 echo 1 > /proc/sys/net/ipv4/ip_forward
@@ -584,7 +498,6 @@ sed -i 's|#net.ipv4.ip_forward=1|net.ipv4.ip_forward=1|' /etc/sysctl.conf
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # tcp tweaks
 echo \> Applying Kernel TCP Tweaks...
 echo "fs.file-max = 51200" >> /etc/sysctl.conf
@@ -609,7 +522,6 @@ echo "net.ipv4.tcp_congestion_control = hybla" >> /etc/sysctl.conf
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # configure privoxy
 echo \> Configuring Privoxy...
 cat > /etc/privoxy/config <<-END
@@ -618,29 +530,28 @@ confdir /etc/privoxy
 logdir /var/log/privoxy
 filterfile default.filter
 logfile logfile
-listen-address 0.0.0.0:8118
-listen-address 0.0.0.0:8008
-toggle 1
-enable-remote-toggle 0
-enable-remote-http-toggle 0
+listen-address  0.0.0.0:3356
+listen-address  0.0.0.0:8086
+toggle  1
+enable-remote-toggle  0
+enable-remote-http-toggle  0
 enable-edit-actions 0
 enforce-blocks 0
 buffer-limit 4096
 enable-proxy-authentication-forwarding 1
-forwarded-connect-retries 1
+forwarded-connect-retries  1
 accept-intercepted-requests 1
 allow-cgi-request-crunching 1
 split-large-forms 0
 keep-alive-timeout 5
 tolerate-pipelining 1
 socket-timeout 300
-permit-access 0.0.0.0/0 $IPADDRESS
+permit-access 0.0.0.0/0 xxxxxxxxx
 
 END
 sleep 1
 echo \> Done!
 sleep 1
-clear
 # configure squid
 echo \> Configuring Squid Proxy Server...
 cat > /etc/squid/squid.conf <<-END
@@ -664,8 +575,6 @@ http_access allow manager localhost
 http_access deny manager
 http_access allow localhost
 http_access deny all
-http_port 3128
-http_port 8000
 http_port 8080
 coredump_dir /var/spool/squid
 refresh_pattern ^ftp: 1440 20% 10080
@@ -679,104 +588,17 @@ sed -i $IPADD /etc/squid/squid.conf;
 sleep 1
 echo \> Done!
 sleep 1
-clear
-# configuring stunnel4
-echo \> Configuring stunnel4...
-cd /etc/stunnel/
-openssl req -new -newkey rsa:1024 -days 3650 -nodes -x509 -sha256 -subj '/CN=127.0.0.1/O=localhost/C=US' -keyout /etc/stunnel/stunnel.pem -out /etc/stunnel/stunnel.pem
-cat > /etc/stunnel/stunnel.conf <<-END
-client = no
-pid = /var/run/stunnel.pid
-[openvpn]
-accept = 443
-connect = 127.0.0.1:110
-cert = /etc/stunnel/stunnel.pem
-[dropbear]
-accept = 444
-connect = 127.0.0.1:222
-cert = /etc/stunnel/stunnel.pem
-END
-sudo sed -i -e 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
-cat > /root/OPENVPNSTUNNEL.conf <<-END
-client = yes
-debug = 6
-[openvpn]
-accept = 127.0.0.1:110
-connect = $IPADDRESS:443
-TIMEOUTclose = 0
-verify = 0
-sni = payloadhere
-END
-sleep 1
-echo \> Done!
-sleep 1
-clear
 # Generating config in 1 zip file
 echo \> Compressing OpenVPN Configuration to Zip File...
 cd /root/
-zip /var/www/config.zip OPENVPNSTUNNEL.conf TNT-ML10-GAMETIME.ovpn OPENVPNSTUNNEL.ovpn SUN-TU200.ovpn SUN-CTC-TU50.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn
+zip /var/www/html/config.zip SUN-TU200.ovpn SUN-CTC-TU50.ovpn TNT-ML10-GAMETIME.ovpn SUN-NOLOAD.ovpn GLOBE-GOWATCHANDPLAY.ovpn GLOBE-GOWATCHANDPLAY2.ovpn SUN-FLP.ovpn DEFAULT-NO-PROXY.ovpn DEFAULT-WITH-PROXY.ovpn > /dev/null
 sleep 1
 echo \> Done!
 sleep 1
-clear
-# Add vpnuseradd script
-echo \> Adding vpnuseradd Script...
-cat > /usr/bin/vpnuseradd <<-END
-#!/bin/sh
-if [ -z "\$1" ];
-then
-echo "vpnuseradd <days> <username> <password>"
-else
-useradd -s /bin/false -e \`date +%F -d "+\$1 days"\` \$2 > /dev/null 2>&1
-echo "\$2:\$3" | chpasswd > /dev/null 2>&1
-echo Expiration: \`date "+%m/%d/%Y @ %T" -d "+\$1 days"\`
-echo Username: \$2
-echo Password: \$3
-fi
-END
-chmod 777 /usr/bin/vpnuseradd
-sleep 1
-
-#Installing Webmin
-apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python
-cd
-wget "https://raw.githubusercontent.com/yusaku04/AKoa/master/webmin_1.801_all.deb" 
-dpkg --install webmin_1.801_all.deb;
-apt-get -y -f install
-sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
-rm /root/webmin_1.801_all.deb 
-service webmin restart 
-
-#Installing Webmin
-apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python
-cd
-wget "https://raw.githubusercontent.com/yusaku04/AKoa/master/webmin_1.801_all.deb" 
-dpkg --install webmin_1.801_all.deb;
-apt-get -y -f install
-sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
-rm /root/webmin_1.801_all.deb 
-service webmin restart 
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-echo \> Done!
-
-
-sleep 1
-=======
 # install libxml-parser
 apt-get install -y libxml-parser-perl 
->>>>>>> parent of 8bd33ba... Update AutoUbuntu.sh
-=======
-# install libxml-parser
-apt-get install -y libxml-parser-perl 
->>>>>>> parent of 8bd33ba... Update AutoUbuntu.sh
-=======
-# install libxml-parser
-apt-get install -y libxml-parser-perl 
->>>>>>> parent of 8bd33ba... Update AutoUbuntu.sh
 
 # Add openvpn user
 echo \> Adding default OpenVPN User...
@@ -790,22 +612,21 @@ useradd redmi
 echo "redmi:redmi" | chpasswd
 sleep 1
 echo \> Done!
+sleep 1
 clear
 echo \> Install finish!
 echo
 echo \> VPS Open Ports
-echo OpenSSH Port: 22
-echo Micro HTTPD: 80
+echo SSH Port: 22
 echo OpenVPN Port: 110
-echo OpenVPN stunnel Port: 443
-echo SSH Dropbear Port: 222
-echo SSH Dropbear stunnel Port: 444
-echo Squid Port: 3128,8000,8080
-echo Privoxy Port: 8008,8118
+echo Squid Port: 8080
+echo Privoxy Port: 3356
 echo
 sleep 1
 echo \> Download your openvpn config here.
-echo http://$IPADDRESS/config.zip
+echo http://$MYIP/config.zip
 echo
-echo Rebooting...
+sleep 1
+echo \> Rebooting...
+sleep 3
 reboot
